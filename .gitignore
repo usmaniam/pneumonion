@@ -5,3 +5,6 @@ eval/clips/
 *.db*
 __pycache__/
 .pytest_cache/
+.env
+.env.*
+!.env.example

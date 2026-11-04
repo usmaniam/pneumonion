@@ -1,25 +1,36 @@
-app = "pneumonion"
-primary_region = "iad"
+# fly.toml app configuration file generated for pneumonion on 2026-11-04T09:32:19Z
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'pneumonion'
+primary_region = 'iad'
+
+[build]
 [env]
-  DB_PATH = "/data/pneumonion.db"
-  MAX_UPLOAD_MB = "25"
+  DB_PATH = '/data/pneumonion.db'
+  MAX_UPLOAD_MB = '25'
+
+[[mounts]]
+  source = 'data'
+  destination = '/data'
+
 [http_service]
   internal_port = 8080
   force_https = true
-  auto_stop_machines = "stop"
+  auto_stop_machines = 'stop'
   auto_start_machines = true
   min_machines_running = 0
-[[mounts]]
-  source = "data"
-  destination = "/data"
-[[vm]]
-  memory = "1gb"
-  cpus = 2
-  cpu_kind = "shared"
 
-[[http_service.checks]]
-  grace_period = "20s"
-  interval = "30s"
-  method = "GET"
-  path = "/healthz"
-  timeout = "5s"
+  [[http_service.checks]]
+    interval = '30s'
+    timeout = '5s'
+    grace_period = '20s'
+    method = 'GET'
+    path = '/healthz'
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 2
+  memory_mb = 1024

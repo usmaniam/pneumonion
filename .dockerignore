@@ -1,0 +1,12 @@
+# flyctl launch added from .gitignore
+**/eval/synthetic*
+**/eval/track_cache
+**/eval/out
+**/eval/clips
+**/*.db*
+**/__pycache__
+**/.pytest_cache
+**/.env
+**/.env.*
+!**/.env.example
+fly.toml
