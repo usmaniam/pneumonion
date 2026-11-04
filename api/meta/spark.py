@@ -54,7 +54,7 @@ async def quality_gate(client, frames_b64, safety_id, language="English"):
     content = [{"type": "input_text", "text": _prompt(language)}] + [
         {"type": "input_image", "image_url": f"data:image/jpeg;base64,{b}"} for b in frames_b64]
     base = dict(model=SPARK_MODEL, store=False, reasoning={"effort": "low"},   # "none" is rejected by Spark
-                safety_identifier=safety_id, max_output_tokens=400,
+                safety_identifier=safety_id, max_output_tokens=2000,
                 input=[{"type": "message", "role": "user", "content": content}])
     strict = {"format": {"type": "json_schema", "name": "quality_gate", "schema": SCHEMA, "strict": True}}
     try:

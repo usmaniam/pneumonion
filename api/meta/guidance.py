@@ -48,7 +48,7 @@ async def make_guidance(client, cls, cfg, language, safety_id, verdict=None, nex
               f"Set urgency to go_now, today or watch to match the action. Return only JSON.\n{json.dumps(ctx)}")
     try:
         resp = await client.responses.create(
-            model=SPARK_MODEL, store=False, reasoning={"effort": "low"}, safety_identifier=safety_id, max_output_tokens=600,
+            model=SPARK_MODEL, store=False, reasoning={"effort": "low"}, safety_identifier=safety_id, max_output_tokens=2000,
             input=[{"type": "message", "role": "user", "content": [{"type": "input_text", "text": prompt}]}],
             text={"format": {"type": "json_schema", "name": "guidance", "schema": SCHEMA, "strict": True}})
         out = json.loads(re.sub(r"^```(?:json)?|```$", "", resp.output_text.strip(), flags=re.M).strip())
