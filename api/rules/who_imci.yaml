@@ -1,0 +1,16 @@
+# DRAFT thresholds. [CLINICIAN REVIEW] required before any clinical claim.
+version: "draft-0.1-UNREVIEWED"
+guideline_cited: "TODO: cite WHO IMCI / 2014 WHO pneumonia update"
+fast_breathing_bpm: {young_infant: 60, infant_2_11: 50, child_12_59: 40}
+borderline_margin_bpm: 3
+spo2_severe_below: 90
+chest_indrawing_classification: ASSESS_TODAY   # or URGENT_REFERRAL; clinician to choose
+recheck_interval_hours: 24
+actions:
+  URGENT_REFERRAL: "Go to a health facility now."
+  ASSESS_TODAY: "See a health worker today."
+  FAST_BREATHING: "See a health worker today. Fast breathing can mean pneumonia."
+  NO_SIGNS_FOUND: "No signs found in this check. Recheck as scheduled and return if your child gets worse."
+  NO_CLASSIFICATION: "The video count was not reliable. Count breaths manually for one minute or retry."
+# [CLINICIAN REVIEW] static return-precaution text shown with every result
+return_precautions: "Go to a health facility now if your child cannot drink or breastfeed, vomits everything, has fits, is very sleepy or hard to wake, has blue lips, or the breathing gets harder."

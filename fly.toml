@@ -1,0 +1,25 @@
+app = "pneumonion"
+primary_region = "iad"
+[env]
+  DB_PATH = "/data/pneumonion.db"
+  MAX_UPLOAD_MB = "25"
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+[[mounts]]
+  source = "data"
+  destination = "/data"
+[[vm]]
+  memory = "1gb"
+  cpus = 2
+  cpu_kind = "shared"
+
+[[http_service.checks]]
+  grace_period = "20s"
+  interval = "30s"
+  method = "GET"
+  path = "/healthz"
+  timeout = "5s"

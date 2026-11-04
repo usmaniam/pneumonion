@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Pneumonion</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#12262E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#12262E;--paper:#F4F7F7;--teal:#0E6A78;--red:#B3261E;--amber:#9A5800;--green:#1D7A54;--mute:#52666D;--line:#D2DDDF;--card:#fff;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--ink:#E8F0F1;--paper:#0F1D22;--teal:#5CC3D2;--red:#FF8A80;--amber:#F2B25C;--green:#6FD3A2;--mute:#9DB1B7;--line:#2A3E45;--card:#16282E;color-scheme:dark}}
+*{box-sizing:border-box}html,body{margin:0}
+body{font:18px/1.5 "Atkinson Hyperlegible",system-ui,sans-serif;background:var(--paper);color:var(--ink);padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+main{max-width:34rem;margin:0 auto;padding:1.25rem 1.1rem 6rem}
+h1{font-size:1.9rem;line-height:1.15;margin:.2rem 0 .6rem}h2{font-size:1.3rem;margin:1.4rem 0 .5rem}p{margin:.5rem 0;max-width:62ch}
+.mute{color:var(--mute);font-size:.95rem}[hidden]{display:none!important}
+label.f{display:block;margin:1rem 0 .3rem;font-weight:700}
+input,select{font:inherit;width:100%;padding:.8rem;border:2px solid var(--line);border-radius:.6rem;background:var(--card);color:var(--ink)}
+button{font:inherit;font-weight:700;min-height:3.4rem;padding:.7rem 1.2rem;border-radius:.7rem;border:2px solid var(--teal);background:var(--teal);color:#fff;width:100%;margin:.5rem 0;cursor:pointer}
+@media (prefers-color-scheme:dark){button{color:#0F1D22}}
+button.alt{background:transparent;color:var(--teal)}button.bad{background:transparent;border-color:var(--red);color:var(--red)}
+button:disabled{opacity:.45;cursor:not-allowed}
+:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.q{padding:.9rem 0;border-bottom:1px solid var(--line)}.q p{margin:0 0 .5rem;font-weight:700}
+.yn{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}.yn button{margin:0;background:var(--card);color:var(--ink);border-color:var(--line)}
+.yn button[aria-pressed=true]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.bar{height:.6rem;background:var(--line);border-radius:1rem;overflow:hidden;margin:1rem 0}.bar i{display:block;height:100%;width:0;background:var(--teal);transition:width .6s}
+video,canvas{width:100%;border-radius:.7rem;background:#000;display:block}
+.q.todo{outline:3px solid var(--amber);outline-offset:2px;border-radius:.5rem}
+.stage{position:relative}.stage canvas{position:absolute;inset:0;height:100%;pointer-events:none}
+.verdict{padding:1.1rem;border-radius:.8rem;border:3px solid;margin:.8rem 0}.verdict b{font-size:1.5rem;line-height:1.25;display:block}
+.v-red{border-color:var(--red)}.v-red b{color:var(--red)}.v-amber{border-color:var(--amber)}.v-amber b{color:var(--amber)}.v-green{border-color:var(--green)}.v-green b{color:var(--green)}
+.wave{width:100%;height:8rem;background:var(--card);border:1px solid var(--line);border-radius:.7rem}
+.wave path{fill:none;stroke:var(--teal);stroke-width:2;stroke-dasharray:var(--len);stroke-dashoffset:var(--len);animation:draw 2.4s ease-out forwards}
+@keyframes draw{to{stroke-dashoffset:0}}@media (prefers-reduced-motion:reduce){.wave path{animation:none;stroke-dashoffset:0}.bar i{transition:none}}
+.big{font-size:2.6rem;font-weight:700;line-height:1}
+.tap{min-height:9rem;font-size:1.6rem}
+.note{background:var(--card);border:1px solid var(--line);border-radius:.7rem;padding:.8rem 1rem;margin:.8rem 0}
+footer{position:fixed;left:0;right:0;bottom:0;background:var(--ink);color:var(--paper);padding:.6rem 1rem calc(.6rem + env(safe-area-inset-bottom));font-size:.85rem;text-align:center}
+</style>
+</head>
+<body>
+<main>
+<section id="s-start">
+  <h1>Check your child's breathing</h1>
+  <p>Record 60 seconds of your child resting. The app counts breaths, asks about danger signs, and tells you what to do next.</p>
+  <div id="case-panel" hidden></div>
+  <div id="new-panel">
+    <label class="f" for="age">Child's age in months (0 to 59)</label><input id="age" type="number" inputmode="numeric" min="0" max="59">
+    <label class="f" for="lang">Language for the advice</label>
+    <select id="lang"><option>English</option><option>Hindi</option><option>Spanish</option><option>French</option><option>Portuguese</option><option>Arabic</option><option>Bengali</option><option>Indonesian</option><option>Vietnamese</option></select>
+    <p class="mute" id="lang-note">Advice is written by AI in this language. The action line in English always stays on screen.</p>
+  </div>
+  <label class="f" for="code">Access code</label><input id="code" type="password" autocomplete="off">
+  <p class="note"><label><input id="consent" type="checkbox" style="width:auto;margin-right:.5rem">I agree to record my child on video. The video is deleted as soon as the count is done. Only the numbers are kept.</label></p>
+  <button id="go" disabled>Continue</button>
+  <p class="mute" id="start-note" role="status"></p>
+</section>
+
+<section id="s-q" hidden>
+  <h1>Danger signs</h1><p class="mute">Answer every question. Tap Yes or No.</p>
+  <div id="voice" hidden><button class="alt" id="mic" type="button">Answer by voice</button><p class="mute" id="voice-msg" role="status"></p></div>
+  <div id="qs"></div>
+  <label class="f" for="days">How many days has your child had cough or hard breathing?</label><input id="days" type="number" inputmode="numeric" min="0" max="60">
+  <label class="f" for="spo2">Oxygen reading, if you have a pulse oximeter (optional)</label><input id="spo2" type="number" inputmode="numeric" min="50" max="100">
+  <label id="vwrap" class="note" hidden><input id="vchk" type="checkbox" style="width:auto;margin-right:.5rem">I checked all the answers above, including any heard from my voice.</label>
+  <button id="q-go" disabled>Continue to recording</button>
+</section>
+
+<section id="s-rec" hidden>
+  <h1>Record 60 seconds</h1>
+  <div class="stage"><video id="cam" playsinline muted></video></div>
+  <div class="bar" aria-hidden="true"><i id="rec-bar"></i></div>
+  <p id="rec-msg" role="status">Rest the phone on a steady surface, 30 to 50 cm away. Chest uncovered or thin clothes, good light, child calm.</p>
+  <button id="rec-go">Start recording</button>
+  <button class="alt" id="rec-manual">Count breaths by hand instead</button>
+</section>
+
+<section id="s-proc" hidden>
+  <h1 id="proc-t">Working</h1><div class="bar"><i id="proc-bar"></i></div><p class="mute" role="status" id="proc-s"></p>
+</section>
+
+<section id="s-retry" hidden>
+  <h1 id="retry-t">Record again</h1><p id="retry-m"></p><p class="mute" id="retry-n"></p>
+  <button id="retry-go">Record again</button><button class="alt" id="retry-manual">Count breaths by hand instead</button>
+</section>
+
+<section id="s-manual" hidden>
+  <h1>Count by hand</h1>
+  <p>Watch your child's chest or belly. Tap once for every breath (one rise and fall) until the timer ends.</p>
+  <div class="big" id="m-time">60</div>
+  <button class="tap" id="m-tap" disabled>Tap each breath</button>
+  <p class="big" id="m-n" aria-live="polite">0</p>
+  <button id="m-start">Start 60 second timer</button><button id="m-done" hidden>See result</button>
+</section>
+
+<section id="s-res" hidden>
+  <div id="verdict" class="verdict"></div>
+  <p id="guide"></p><p class="mute" id="guide-src"></p>
+  <div id="cmp"></div>
+  <h2>Breathing count</h2>
+  <p><span class="big" id="bpm"></span> <span class="mute" id="bpm-sub"></span></p>
+  <p id="bpm-note"></p>
+  <div id="media" hidden>
+    <div class="stage"><video id="play" playsinline muted controls></video><canvas id="ov"></canvas></div>
+    <p class="mute">Teal band: the chest area used for the count.</p>
+    <svg class="wave" id="wave" viewBox="0 0 300 80" preserveAspectRatio="none" role="img" aria-label="Breathing waveform with detected breaths"></svg>
+  </div>
+  <div id="trend-box" hidden><h2>Breaths per minute over time</h2><svg id="trend" viewBox="0 0 320 170" role="img" aria-label="Trend of breathing rate across checks"></svg></div>
+  <p class="mute" id="audit"></p>
+  <button id="ics" class="alt">Add recheck reminders to my calendar</button>
+  <button id="recheck">Start a recheck</button>
+  <button id="del" class="bad">Delete this case</button>
+</section>
+</main>
+<footer>Triage support. Not a diagnosis. If your child is struggling to breathe, go to a health facility now.</footer>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const tok=localStorage.pn_token||(localStorage.pn_token=[...crypto.getRandomValues(new Uint8Array(16))].map(b=>b.toString(16).padStart(2,'0')).join(''));
+const S={age:null,lang:'English',ans:{},caseId:localStorage.pn_case||null,recheck:false,failed:0,blob:null,stream:null};
+const QS=[['unable_to_drink','Cannot drink or breastfeed'],['vomits_everything','Vomits everything'],['convulsions','Has had fits (convulsions) during this illness'],['sleepy','Unusually sleepy or hard to wake'],['stridor','Noisy breathing when calm'],['chest_indrawing','Lower chest pulls in with each breath'],['blue_lips','Blue lips'],['fever','Has a fever (optional)']];
+const STAGES={queued:'Starting',transcoding:'Preparing video',gating:'Checking the video is usable',tracking:'Finding your child',measuring:'Counting breaths',classifying:'Working out what to do'};
+const show=id=>{$$('main>section').forEach(s=>s.hidden=s.id!==id);scrollTo(0,0)};
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function h(tag,attrs={},...kids){const e=document.createElement(tag);for(const k in attrs)k in e?e[k]=attrs[k]:e.setAttribute(k,attrs[k]);e.append(...kids);return e}
+async function api(path,o={}){
+  const r=await fetch(path,{...o,headers:{'X-Access-Code':sessionStorage.pn_code||'','X-Case-Token':tok,...(o.headers||{})}});
+  if(r.status===401){show('s-start');$('#start-note').textContent='That access code was not accepted.';throw new Error('auth')}
+  if(!r.ok){let m='Something went wrong.';try{const j=await r.json();m=typeof j.detail==='string'?j.detail:m}catch{}throw new Error(m)}
+  return r;
+}
+const J=async(p,o)=>(await api(p,o)).json();
+
+/* start */
+function gate(){$('#go').disabled=!($('#consent').checked&&$('#code').value&&(S.recheck||$('#age').value!==''))}
+['#consent','#code','#age'].forEach(s=>$(s).addEventListener('input',gate));
+$('#go').onclick=()=>{sessionStorage.pn_code=$('#code').value;S.recheck=false;S.age=+$('#age').value;S.lang=$('#lang').value;buildQ();show('s-q')};
+async function init(){
+  if(sessionStorage.pn_code)$('#code').value=sessionStorage.pn_code;
+  if(S.caseId&&sessionStorage.pn_code){try{
+    const c=await J('/api/cases/'+S.caseId);S.lang=c.case.language;const p=$('#case-panel');p.hidden=false;
+    p.append(h('div',{className:'note'},c.recheck_overdue?'A recheck is due now.':'Next recheck: '+(c.next_recheck_utc?new Date(c.next_recheck_utc).toLocaleString():'none scheduled')));
+    p.append(h('button',{onclick:()=>{if(!$('#consent').checked||!$('#code').value){$('#start-note').textContent='Enter the access code and tick the consent box first.';return}sessionStorage.pn_code=$('#code').value;S.recheck=true;S.ans={};buildQ();show('s-q')}},'Start recheck'),h('button',{className:'alt',onclick:()=>{localStorage.removeItem('pn_case');S.caseId=null;p.hidden=true;gate()}},'Start a new case'));
+  }catch(e){localStorage.removeItem('pn_case');S.caseId=null}}
+  gate();
+}
+
+/* questions */
+function buildQ(){
+  const box=$('#qs');box.replaceChildren();S.voice=false;$('#vwrap').hidden=true;$('#vchk').checked=false;
+  for(const [k,t] of QS){
+    const yes=h('button',{type:'button'},'Yes'),no=h('button',{type:'button'},'No');
+    const row=h('div',{className:'q',role:'group','aria-label':t},h('p',{},t),h('div',{className:'yn'},yes,no));ROW[k]=row;
+    const set=(v,voice)=>{S.ans[k]=v;if(voice===true)S.voice=true;row.classList.remove('todo');yes.setAttribute('aria-pressed',v);no.setAttribute('aria-pressed',!v);ready()};
+    SET[k]=set;yes.onclick=()=>set(true);no.onclick=()=>set(false);box.append(row);
+  }
+  ['#days','#spo2'].forEach(s=>$(s).oninput=ready);$('#vchk').onchange=ready;ready();voiceInit();
+}
+function ready(){const need=QS.filter(q=>q[0]!=='fever').every(q=>k(q[0]));$('#q-go').disabled=!(need&&$('#days').value!==''&&(!S.voice||$('#vchk').checked))}
+const k=x=>S.ans[x]!==undefined;const SET={},ROW={};let VL=null;
+function answers(){const a={};for(const [x] of QS)if(k(x))a[x]=S.ans[x];a.days_ill=+$('#days').value;if($('#spo2').value)a.spo2=+$('#spo2').value;return a}
+$('#q-go').onclick=startCam;
+
+/* voice (optional, tap-to-start / tap-to-stop; parsed answers must be confirmed by the caregiver) */
+async function voiceInit(){
+  if(VL===null){try{VL=(await J('/api/voice/languages')).languages}catch{VL=[]}}
+  $('#voice').hidden=!(VL.includes(S.lang)&&navigator.mediaDevices&&window.MediaRecorder);
+}
+let vrec;
+$('#mic').onclick=async()=>{
+  if(vrec&&vrec.state==='recording'){vrec.stop();return}
+  try{
+    const st=await navigator.mediaDevices.getUserMedia({audio:true}),ch=[];vrec=new MediaRecorder(st);
+    const to=setTimeout(()=>vrec.state==='recording'&&vrec.stop(),30000);
+    vrec.ondataavailable=e=>e.data.size&&ch.push(e.data);
+    vrec.onstop=()=>{st.getTracks().forEach(t=>t.stop());clearTimeout(to);$('#mic').textContent='Answer by voice';voiceSend(new Blob(ch,{type:vrec.mimeType}))};
+    vrec.start();$('#mic').textContent='Tap to stop';$('#voice-msg').textContent='Listening. Say your answers, then tap stop.';
+  }catch{$('#voice-msg').textContent='Microphone blocked. Please tap your answers.'}
+};
+async function voiceSend(blob){
+  const m=$('#voice-msg');m.textContent='Understanding your answers...';
+  try{
+    const f=new FormData();f.append('audio',blob,'a');f.append('language',S.lang);
+    const {text}=await J('/api/transcribe',{method:'POST',body:f});
+    const p=await J('/api/interview/parse',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({transcript:text,language:S.lang})});
+    for(const [key,v] of Object.entries(p.answers)){if(v==='yes'||v==='no')SET[key](v==='yes',true);else if(key!=='fever')ROW[key].classList.add('todo')}
+    if(p.days_ill!=null)$('#days').value=p.days_ill;
+    $('#vwrap').hidden=false;$('#vchk').checked=false;ready();
+    m.textContent=`We heard: "${text}". Check every answer. Highlighted questions still need a tap.`;
+  }catch(e){m.textContent=e.message==='auth'?'':'Voice did not work. Please tap your answers.'}
+}
+
+/* record */
+async function startCam(){
+  show('s-rec');
+  if(!navigator.mediaDevices||!window.MediaRecorder){$('#rec-msg').textContent='Video recording is not available here. Count by hand instead.';$('#rec-go').hidden=true;return}
+  try{S.stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment',width:640,height:480,frameRate:15},audio:false});$('#cam').srcObject=S.stream;await $('#cam').play();$('#rec-go').hidden=false}
+  catch{$('#rec-msg').textContent='Camera permission was blocked. Allow the camera in your browser settings, or count by hand.';$('#rec-go').hidden=true}
+}
+$('#rec-go').onclick=()=>{
+  const mime=['video/mp4','video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'].find(t=>MediaRecorder.isTypeSupported(t));
+  const rec=new MediaRecorder(S.stream,{mimeType:mime,videoBitsPerSecond:1e6}),chunks=[];
+  rec.ondataavailable=e=>e.data.size&&chunks.push(e.data);
+  rec.onstop=()=>{S.stream.getTracks().forEach(t=>t.stop());S.blob=new Blob(chunks,{type:rec.mimeType});upload()};
+  rec.start(1000);$('#rec-go').hidden=true;const t0=Date.now();
+  const tick=setInterval(()=>{const s=(Date.now()-t0)/1000;$('#rec-bar').style.width=Math.min(100,s/60*100)+'%';$('#rec-msg').textContent=`Recording. Keep still. ${Math.max(0,Math.ceil(60-s))} seconds left.`;if(s>=60){clearInterval(tick);rec.stop()}},250);
+};
+$('#rec-manual').onclick=$('#retry-manual').onclick=()=>{S.stream&&S.stream.getTracks().forEach(t=>t.stop());show('s-manual')};
+$('#retry-go').onclick=startCam;
+
+/* upload + poll */
+async function upload(){
+  show('s-proc');$('#proc-t').textContent='Checking the video';setBar(5);
+  const f=new FormData();f.append('video',S.blob,'clip');f.append('answers',JSON.stringify(answers()));f.append('failed_attempts',S.failed);
+  let url='/api/assess';if(S.recheck){url=`/api/cases/${S.caseId}/recheck`}else{f.append('age_months',S.age);f.append('language',S.lang)}
+  try{
+    const {job_id}=await J(url,{method:'POST',body:f});
+    for(;;){await sleep(1500);const j=await J('/api/jobs/'+job_id);setBar(j.progress);$('#proc-s').textContent=STAGES[j.stage]||'';if(j.status!=='running')return outcome(j.result)}
+  }catch(e){if(e.message!=='auth')retry('Something went wrong',e.message+' Try again, or count by hand.')}
+}
+const setBar=n=>$('#proc-bar').style.width=n+'%';
+function retry(t,m,n=''){$('#retry-go').hidden=false;$('#retry-t').textContent=t;$('#retry-m').textContent=m;$('#retry-n').textContent=n;show('s-retry')}
+function outcome(r){
+  if(r.outcome==='done')return result(r);
+  if(r.outcome==='retry'){S.failed++;return retry('Record again',r.message,`Tries left before hand counting: ${r.next.retries_left}`)}
+  if(r.outcome==='manual_fallback'){retry('Count by hand',r.message);$('#retry-go').hidden=true;return}
+  retry('Something went wrong',r.message||'Please try again.');
+}
+
+/* manual count */
+let mTimer;
+$('#m-start').onclick=()=>{let n=0,t=60;$('#m-n').textContent=0;$('#m-tap').disabled=false;$('#m-start').hidden=true;
+  $('#m-tap').onclick=()=>$('#m-n').textContent=++n;
+  mTimer=setInterval(()=>{$('#m-time').textContent=--t;if(t<=0){clearInterval(mTimer);$('#m-tap').disabled=true;$('#m-done').hidden=false}},1000)};
+$('#m-done').onclick=async()=>{
+  const f=new FormData();f.append('answers',JSON.stringify(answers()));f.append('breaths',$('#m-n').textContent);
+  if(S.recheck)f.append('case_id',S.caseId);else{f.append('age_months',S.age);f.append('language',S.lang)}
+  try{result(await J('/api/manual',{method:'POST',body:f}))}catch(e){retry('Count not accepted',e.message)}
+};
+
+/* result */
+const TONE={URGENT_REFERRAL:'red',ASSESS_TODAY:'amber',FAST_BREATHING:'amber',NO_SIGNS_FOUND:'green',NO_CLASSIFICATION:'amber'};
+async function result(r){
+  S.caseId=r.case_id;localStorage.pn_case=r.case_id;const c=r.classification,b=r.breath;
+  $('#verdict').className='verdict v-'+TONE[c.classification];
+  $('#verdict').replaceChildren(h('b',{},r.action_phrase),...(r.comparison?[h('p',{},r.comparison.text)]:[]));
+  $('#guide').textContent=r.guidance.text;
+  $('#guide-src').textContent=r.guidance.source==='model'?`Wording written by AI in ${r.guidance.language} from the result above.`:'Standard wording.';
+  $('#bpm').textContent=b.breaths_per_min??'No count';
+  $('#bpm-sub').textContent=b.breaths_per_min?`breaths a minute (limit for this age: ${c.threshold_bpm})`:'';
+  $('#bpm-note').textContent=b.status!=='OK'?'The video count was not reliable, so it was not used. Count by hand to get a result.':c.repeat_count?'This is close to the limit. Please repeat the check.':b.source==='manual'?'Counted by hand.':'';
+  if(b.status!=='OK'){const m=h('button',{className:'alt',onclick:()=>show('s-manual')},'Count by hand');$('#bpm-note').append(m)}
+  $('#audit').textContent=`Rule ${c.rule_id}. Rules version ${c.rules_version}.`;
+  $('#media').hidden=!(S.blob&&b.overlay);if(S.blob&&b.overlay)player(b);
+  show('s-res');if(b.wave)wave(b.wave,b.window_s);trend();
+}
+function player(b){
+  const v=$('#play'),cv=$('#ov'),ctx=cv.getContext('2d'),by={};b.overlay.forEach(o=>by[o.f]=o);
+  v.src=URL.createObjectURL(S.blob);
+  (function draw(){const w=v.clientWidth,hh=v.clientHeight;if(cv.width!==w)cv.width=w;if(cv.height!==hh)cv.height=hh;ctx.clearRect(0,0,w,hh);
+    const o=by[Math.floor(v.currentTime*10)],s=w/Math.min(640,v.videoWidth||640);
+    if(o){const[l,t,r,bt]=o.box.map(x=>x*s),H=bt-t;ctx.lineWidth=2;ctx.strokeStyle='#fff';ctx.setLineDash(o.usable?[]:[6,4]);ctx.strokeRect(l,t,r-l,H);
+      if(o.usable){ctx.fillStyle='rgba(14,170,190,.45)';ctx.fillRect(l,t+.25*H,r-l,.35*H)}}
+    requestAnimationFrame(draw)})();
+}
+function wave(w,win){
+  const y=w.y,n=y.length,mx=Math.max(...y.map(Math.abs),1),X=i=>i/(n-1)*300,Y=v=>40-v/mx*34;
+  const d=y.map((v,i)=>(i?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1)).join('');
+  const svg=$('#wave');svg.replaceChildren();const ns='http://www.w3.org/2000/svg';
+  const p=document.createElementNS(ns,'path');p.setAttribute('d',d);p.style.setProperty('--len',n*2);svg.append(p);
+  const dur=n/w.fs;for(const t of w.peaks){const i=(t-w.t0)*w.fs;if(i<0||i>=n)continue;const c=document.createElementNS(ns,'circle');c.setAttribute('cx',X(i));c.setAttribute('cy',Y(y[Math.round(i)]));c.setAttribute('r',3);c.setAttribute('fill','var(--amber)');svg.append(c)}
+}
+async function trend(){
+  let c;try{c=await J('/api/cases/'+S.caseId)}catch{return}
+  $('#trend-box').hidden=c.checks.length<2;if(c.checks.length<2)return;
+  const ns='http://www.w3.org/2000/svg',svg=$('#trend');svg.replaceChildren();
+  const mk=(t,a)=>{const e=document.createElementNS(ns,t);for(const k in a)e.setAttribute(k,a[k]);svg.append(e);return e};
+  const top=Math.max(80,...c.checks.map(x=>x.bpm||0))+10,X=i=>30+i*(270/Math.max(1,c.checks.length-1)),Y=v=>150-v/top*140,thr=c.checks[0].threshold_bpm;
+  mk('line',{x1:30,x2:300,y1:Y(thr),y2:Y(thr),stroke:'var(--red)','stroke-dasharray':'5 4'});
+  mk('text',{x:32,y:Y(thr)-4,fill:'var(--red)','font-size':11}).textContent='limit '+thr;
+  const pts=c.checks.filter(x=>x.bpm!=null);
+  mk('polyline',{points:c.checks.map((x,i)=>x.bpm!=null?`${X(i)},${Y(x.bpm)}`:null).filter(Boolean).join(' '),fill:'none',stroke:'var(--mute)','stroke-width':2});
+  c.checks.forEach((x,i)=>{const col=`var(--${TONE[x.classification]})`;
+    if(x.bpm==null)mk('circle',{cx:X(i),cy:Y(0),r:6,fill:'none',stroke:'var(--mute)','stroke-width':2});
+    else{mk('circle',{cx:X(i),cy:Y(x.bpm),r:6,fill:col});mk('text',{x:X(i),y:Y(x.bpm)-10,'text-anchor':'middle',fill:'var(--ink)','font-size':12}).textContent=Math.round(x.bpm)}
+    mk('text',{x:X(i),y:166,'text-anchor':'middle',fill:'var(--mute)','font-size':11}).textContent=i?'Day '+Math.round((new Date(x.ts)-new Date(c.case.created_at))/864e5):'Day 0'});
+}
+
+$('#ics').onclick=async()=>{const b=await (await api(`/api/cases/${S.caseId}/ics`)).blob();const a=h('a',{href:URL.createObjectURL(b),download:'pneumonion-rechecks.ics'});a.click()};
+$('#recheck').onclick=()=>{S.recheck=true;S.ans={};S.blob=null;S.failed=0;buildQ();show('s-q')};
+$('#del').onclick=async()=>{if(!confirm('Delete this case and all its results?'))return;await api('/api/cases/'+S.caseId,{method:'DELETE'});localStorage.removeItem('pn_case');location.reload()};
+init();
+</script>
+</body>
+</html>

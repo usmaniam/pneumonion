@@ -1,0 +1,5 @@
+# DRAFT. [CLINICIAN REVIEW]
+schedule_hours: [24, 48, 72]
+not_improving_day: 3
+not_improving_margin_bpm: 4
+day_tolerance_hours: 6   # a recheck at 66h+ counts as day 3

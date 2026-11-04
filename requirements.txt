@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+python-multipart
+openai
+numpy
+scipy
+opencv-python-headless
+pyyaml
+httpx
+meta-sam-parser>=0.1.0
