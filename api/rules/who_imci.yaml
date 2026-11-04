@@ -1,6 +1,6 @@
 # DRAFT thresholds. [CLINICIAN REVIEW] required before any clinical claim.
 version: "draft-0.1-UNREVIEWED"
-guideline_cited: "TODO: cite WHO IMCI / 2014 WHO pneumonia update"
+guideline_cited: "WHO. Revised WHO classification and treatment of childhood pneumonia at health facilities: evidence summaries. Geneva: WHO; 2014 (ISBN 978 92 4 150781 3); WHO/UNICEF IMCI chart booklet (2014). Draft mapping, not clinician-reviewed."
 fast_breathing_bpm: {young_infant: 60, infant_2_11: 50, child_12_59: 40}
 borderline_margin_bpm: 3
 spo2_severe_below: 90
