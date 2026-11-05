@@ -4,7 +4,7 @@
 
 Built for the Meta Global AI Developer Hackathon (Indie developer track) on Meta's SAM 3.1, Muse Spark 1.3 and Muse Voice Transcribe.
 
-[Live app](https://pneumonion.fly.dev) · [3-minute demo video](#) · Access code: provided to judges in the hackathon submission
+[Live app](https://pneumonion.fly.dev) · [3-minute demo video](https://youtu.be/BVwacUfHKTY?si=ClQmMLC4CnwktpFY) · Access code: provided to judges in the hackathon submission
 
 > **Triage support, not a diagnosis.** Pneumonion is a hackathon prototype. Its rules are drafts that no clinician has reviewed, and it has not been validated on children. See [Limits](#limits-and-what-comes-before-real-use).
 
